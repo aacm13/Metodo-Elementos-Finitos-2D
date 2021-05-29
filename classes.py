@@ -1,82 +1,111 @@
 from enum import Enum
+from abc import ABCMeta, abstractmethod
 
-Lines = Enum('Lines', 'NOLINE SINGLELINE DOUBLELINE')
-Modes = Enum ('Modes', 'NOMODE INT_FLOAT INT_INT_INT')
-Parameters = Enum('Parameters', 'ELEMENT_LENGTH THERMAL_CONDUCTIVITY HEAT_SOURCE')
-Sizes = Enum('Sizes', 'NODES ELEMENTS DIRICHLET NEUMANN')
+class Indicators(Enum):
+    NOTHING = 0
+
+class Lines(Enum):
+    NOLINE = 0
+    SINGLELINE = 1
+    DOUBLELINE = 2
+
+class Modes(Enum):
+    NOMODE = 0
+    INT_FLOAT = 1
+    INT_FLOAT_FLOAT = 2
+    INT_INT_INT_INT = 3
+
+class Parameters(Enum):
+    THERMAL_CONDUCTIVITY = 0
+    HEAT_SOURCE = 1
+
+class Sizes(Enum):
+    NODES = 0
+    ELEMENTS = 1
+    DIRICHLET = 2
+    NEUMANN = 3
 
 class item:
-    id = 0
-    x = 0.0
-    node1 = 1
-    node2 = 1
-    value = 0.0
+    def setId(self, identifier):
+        self._id = identifier
+    
+    def setX(self, x_coord):
+        self._x = x_coord
 
+    def setY(self, y_coord):
+        self._y = y_coord
+    
+    def setNode1(self, node_1):
+        self._node1 = node_1
+
+    def setNode2(self, node_2):
+        self._node2 = node_2
+    
+    def setNode3(self, node_3):
+        self._node3 = node_3
+    
+    def setValue(self, value_to_assign):
+        self._value = value_to_assign
+    
     def getId(self):
-        return self.id
+        return self._id
     
     def getX(self):
-        return self.x
+        return self._x
+    
+    def getY(self):
+        return self._y
     
     def getNode1(self):
-        return self.node1
+        return self._node1
     
     def getNode2(self):
-        return self.node2
+        return self._node2
+    
+    def getNode3(self):
+        return self._node3
     
     def getValue(self):
-        return self.value
+        return self._value
+    
+    @abstractmethod
+    def setValues(self, a, b, c, d, e, f, g):
+        pass
 
 
 
 class Node (item):
-
-    def sentIntFloat(self, iden, x_coo):
-        item.id = iden
-        item.x = x_coo
-
-    def sentIntIntInt(self, n1, n2, n3):
-        pass
+    def setValues(self, a, b, c, d, e, f, g):
+        self._id = a
+        self._x = b
+        self._y = c
 
 class Element(item):
-    
-    def sentIntFloat(self, n1, r):
-        pass
-    
-    def sentIntIntInt(self, iden, firstN, secondN):
-        item.id = iden
-        item.node1 = firstN
-        item.node2 = secondN
+    def setValues(self, a, b, c, d, e, f, g):
+        self._id = a
+        self._node1 = d
+        self._node2 = e
+        self._node3 = f
 
 class Condition(item):
-    
-    def sentIntFloat(self, node_to_apply, prescribed_value):
-        item.node1 = node_to_apply
-        item.value = prescribed_value
-    
-    def sentIntIntInt(self, iden, firstN, secondN):
-        pass
+    def setValues(self, a, b, c, d, e, f, g):
+        self._node1 = d
+        self._value = g
 
 class Mesh:
     parameters = []
     sizes = []
-    node_list = []
-    element_list = []
-    dirichlet_list = []
-    neumann_list = []
 
-    def setParameters(self, l, k, Q):
-        
-        self.parameters.insert(Parameters.ELEMENT_LENGTH.value -1,l)
-        self.parameters.insert(Parameters.THERMAL_CONDUCTIVITY.value - 1, k)
-        self.parameters.insert(Parameters.HEAT_SOURCE.value - 1, Q)
+    def setParameters(self, k, Q):
+        self.parameters.insert(Parameters.THERMAL_CONDUCTIVITY.value,k)
+        self.parameters.insert(Parameters.HEAT_SOURCE.value,Q)
     
     def setSizes(self, nNodes, nElemts, nDirich, nNeumn):
       
-        self.sizes.insert(0, nNodes)
-        self.sizes.insert(1, nElemts)
-        self.sizes.insert(2, nDirich)
-        self.sizes.insert(3, nNeumn)
+        self.sizes.insert(Sizes.NODES.value, nNodes)
+        self.sizes.insert(Sizes.ELEMENTS.value, nElemts)
+        self.sizes.insert(Sizes.DIRICHLET.value, nDirich)
+        self.sizes.insert(Sizes.NEUMANN.value, nNeumn)
      
 
     def getSize(self, s):
@@ -86,22 +115,11 @@ class Mesh:
         return self.parameters[p]
 
     def create(self):
-        
-        for i in range(self.sizes[0]):
-            obj = Node()
-            self.node_list.append(obj)
-        
-        for i in range(self.sizes[1]):
-            obj = Element()
-            self.element_list.append(obj)
-        
-        for i in range(self.sizes[2]):
-            obj = Condition()
-            self.dirichlet_list.append(obj)
-
-        for i in range(self.sizes[3]):
-            obj = Condition()
-            self.neumann_list.append(obj)
+        self.node_list = []
+        self.element_list = []
+        self.index_dirich = []
+        self.dirichlet_list = []
+        self.neuman_list = []
 
         
 
@@ -113,6 +131,9 @@ class Mesh:
 
     def getDirichlet(self):
         return self.dirichlet_list
+
+    def getDirichletIndex(self):
+        return self.index_dirich
 
     def getNeumann(self):
         return self.neumann_list

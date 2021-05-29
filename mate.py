@@ -1,30 +1,49 @@
-import sys
+import numpy as np
 
-def zeroes(matrix, n):
-    for i in range(0, n):
+def zeroesF(matrix, n):
+    for i in range(0,n):
         row = [0.0] * n
         matrix.append(row)
 
-def zeroes(vector, n):
-    for i in range(0, n):
+def zeroesS(matrix, n, m)
+    for i in range(0,n):
+        row = [0.0] * m
+        matrix.append(row)
+
+def zeroesT(vector, n):
+    for i in range(0,n):
         vector.append(0.0)
 
 def copyMatrix(matrix, copy):
-    zeroes(copy, len(matrix))
+    zeroesF(copy, len(matrix))
     for i in range(0, len(matrix)):
-        for j in range(0, len(matrix[0])):
+        for j in range(0, len(matrix)):
             copy[i][j] = matrix[i][j]
 
+def calculateMember(i, j, r, A, B):
+    member = 0
+    for k in range (r):
+        member += A[i][k] * B[k][j]
+    return member
+
+def productMatrixMatrix(A, B, n, r, m):
+    Result = []
+    ZeroesS(Result, n , m)
+    for i in range(n):
+        for j in range(m):
+            Result[i][j] = calculateMember(i, j, r, A, B)
+    return Result
+
 def productMatrixVector(matrix, vector, result):
-    for fila in range(0, len(matrix)):
+    for row in range(0, len(matrix)):
         cell = 0.0
         for celda in range(0, len(vector)):
-            cell += matrix[fila][celda] * vector[celda]
+            cell += matrix[row][celda] * vector[celda]
 
-        result[fila] += cell
+        result[row] += cell
 
 def productRealMatrix(real, matrix, result):
-    zeroes(result, len(matrix))
+    zeroesF(result, len(matrix))
     for i in range(0, len(matrix)):
         for j in range(0, len(matrix[0])):
             result[i][j] = real * matrix[i][j]
@@ -49,7 +68,7 @@ def determinant(matrix):
         return det
 
 def cofactors(matrix, cofactors):
-    zeroes(cofactors, len(matrix))
+    zeroesF(cofactors, len(matrix))
 
     for i in range(0, len(matrix)):
         for j in range(0, len(matrix[0])):
@@ -60,8 +79,7 @@ def cofactors(matrix, cofactors):
             cofactors[i][j] =  pow(-1, i + j) * determinant(minor)
 
 def transpose(matrix, transpose):
-    
-    zeroes(transpose, len(matrix))
+    zeroesS(transpose, len(matrix[0]), len(matrix))
 
     for i in range(0, len(matrix)):
         for j in range(0, len(matrix[0])):
